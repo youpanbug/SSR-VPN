@@ -1,4 +1,4 @@
-# 1.SSR搭建步骤命令
+# SSR搭建步骤命令
 ### cenos7更新指令
 
 ```
@@ -10,6 +10,13 @@ yum update -y
 ```
 wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/ssrmu.sh && chmod +x ssrmu.sh && bash ssrmu.sh
 ```
+
+### (提示:如出现未安装wget,执行以下指令)
+
+```
+yum install wget
+```
+
 ### 使用说明
 
 ```
