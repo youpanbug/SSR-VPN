@@ -68,6 +68,7 @@ wget "https://github.com/chiakge/Linux-NetSpeed/raw/master/tcp.sh" && chmod +x t
 
 # 特别说明
 ### libsodium 一键安装教程(chacha20加密方法需要libsodium)
+
 ```
 yum install -y wget && wget -N --no-check-certificate https://cloud.deng-quan.com/Microd-script/libsodium.sh && chmod +x libsodium.sh && ./libsodium.sh
 或
