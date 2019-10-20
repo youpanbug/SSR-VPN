@@ -67,11 +67,88 @@ wget "https://github.com/chiakge/Linux-NetSpeed/raw/master/tcp.sh" && chmod +x t
 
 
 # 特别说明
-### libsodium 一键安装教程(chacha20加密方法需要libsodium)
+
+## 安装libsodium库解决libsodium not found问题
+## 0.案例
+## 0.系统默认是没有 chacha20 加密方式的，需要手动编译 libsodium 1.0.8 及以上版本。安装需要以root权限安装
+
+## 解决方案
+
+## 0.获取root权限
 
 ```
-yum install -y wget && wget -N --no-check-certificate https://cloud.deng-quan.com/Microd-script/libsodium.sh && chmod +x libsodium.sh && ./libsodium.sh
-或
-wget https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz && tar xf libsodium-1.0.18.tar.gz && cd libsodium-1.0.18 && ./configure && make -j2 && make install && ldconfig && cd /
+su root
+```
+
+## 1. 安装依赖
+
+### Debian 7/8、Ubuntu 14/15/16 及其衍生系列：
 
 ```
+sudo apt-get update
+sudo apt-get install build-essential wget -y
+```
+
+### Centos 6/7、RHEL 7 及其衍生系列：
+
+```
+yum groupinstall "Development Tools" -y
+yum install wget -y
+```
+
+## 2. 下载 libsodium 最新版本(推荐用1.0.10版本)
+
+### 可以从libsodium 官网下，也可以从github 下载。选择速度最快的下载方式。
+
+#### <1> 从官网下载：
+
+```
+wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz
+```
+
+#### <2> 从 github 下载（其中 1.0.10 是 libusodium 的版本号，可以改成最新的）：
+
+```
+wget https://github.com/jedisct1/libsodium/releases/download/1.0.10/libsodium-1.0.10.tar.gz
+```
+
+## 3. 解压
+
+#### <1>官网下载的：
+
+```
+tar xzvf LATEST.tar.gz
+```
+
+#### <2>github 下载的：
+
+```
+tar xzvf libsodium-1.0.10.tar.gz
+```
+
+## 4. 生成配置文件
+
+```
+cd libsodium*
+```
+
+```
+./configure
+```
+
+## 5. 编译并安装
+
+```
+make -j8 && make install
+```
+
+## 6. 添加运行库位置并加载运行库：
+
+```
+echo /usr/local/lib > /etc/ld.so.conf.d/usr_local_lib.conf
+```
+
+```
+ldconfig
+```
+原文：https://blog.csdn.net/hanshihao1336295654/article/details/79850584
