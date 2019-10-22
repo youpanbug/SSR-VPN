@@ -1,72 +1,235 @@
-# SSR搭建步骤命令
-### cenos7更新指令
+# V2ray搭建
+### 获取root权限
+```
+sudo su
+```
+### cenos更新指令
 
 ```
 yum update -y
 ```
 
-### ssr脚本
+### 自动安装脚本(V2Ray 官方维护并提供了适用于大多数主流系统的自动安装脚本)
 
 ```
-wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/ssrmu.sh && chmod +x ssrmu.sh && bash ssrmu.sh
+bash <(curl -L -s https://install.direct/go.sh)
 ```
 
-### (提示:如出现未安装wget,执行以下指令)
+### 启动V2ray
+
+```
+systemctl start v2ray       //然后输入端口 ID测试是否能正常使用(端口（Port）、id（UUID）)
+```
+
+# 手动安装TCP BBR（Bottleneck Bandwidth and Round-trip propagation time）是由Google设计，于2016年发布的拥塞算法。
+### 更新系统
+```
+yum update -y
+```
+### 查看系统版本，输出的release数值大于7.3即可
+
+```
+cat /etc/redhat-release
+```
+
+### 对于某些机器来说，安装一下wget
 
 ```
 yum install wget
 ```
-
-### 使用说明
-
-```
-#运行脚本
-bash ssrmu.sh
-```
-### 文件位置
+### 使用下面命令安装elrepo并升级内核
 
 ```
-安装目录：/usr/local/shadowsocksr
-
-配置文件：/usr/local/shadowsocksr/user-config.json
-
-数据文件：/usr/local/shadowsocksr/mudb.json
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+```
+```
+rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+```
+```
+yum --enablerepo=elrepo-kernel install kernel-ml -y
 ```
 
-### 脚本控制
+### 更新grub文件并重启（reboot后，ssh会断开，稍等一会儿重新连接）
 
 ```
-启动 ShadowsocksR：/etc/init.d/ssrmu start
-
-停止 ShadowsocksR：/etc/init.d/ssrmu stop
-
-重启 ShadowsocksR：/etc/init.d/ssrmu restart
-
-查看 ShadowsocksR状态：/etc/init.d/ssrmu status
-
-ShadowsocksR 默认支持UDP转发，服务端无需任何设置。
+egrep ^menuentry /etc/grub2.cfg | cut -f 2 -d \'
+```
+```
+grub2-set-default 0
+```
+```
+reboot
 ```
 
-### 其它
+### 开机后查看内核是否已更换为4.9(或更高版本)
 
-#### CentOS7 如果不能使用可能是因为防火墙firewall问题
 ```
-#开放端口 比如你设置的SSR端口为2013
+uname -r
+```
+
+### 启动BBR
+
+```
+echo "net.core.default_qdisc = fq" >> /etc/sysctl.conf
+```
+```
+echo "net.ipv4.tcp_congestion_control = bbr" >> /etc/sysctl.conf
+```
+```
+sysctl -p 
+```
+
+### 验证bbr是否已经开启
+
+#### A，验证当前TCP控制算法的命令
+
+```
+sysctl net.ipv4.tcp_available_congestion_control
+```
+//返回值一般为：net.ipv4.tcp_available_congestion_control = bbr cubic reno 或者为：net.ipv4.tcp_available_congestion_control = reno cubic bbr
+
+#### B，验证BBR是否已经启动
+
+```
+sysctl net.ipv4.tcp_congestion_control
+```
+//返回值一般为：net.ipv4.tcp_congestion_control = bbr
+
+```
+lsmod | grep bbr
+```
+//返回值有 tcp_bbr 模块即说明 bbr 已启动
+
+
+
+
+
+
+
+## 其它
+
+### CentOS7 如果不能使用可能是因为防火墙firewall问题
+```
+## 开放端口 比如你设置的SSR端口为2013
 firewall-cmd --zone=public --add-port=2013/tcp --permanent
 firewall-cmd --zone=public --add-port=2013/udp --permanent
-#重新载入
+## 重新载入
 firewall-cmd --reload
+## 查看已开放端口
+firewall-cmd --zone=public --list-ports
 ```
 
-### 锐速bbr脚本(建议选择BBRplus)
+### 测速
+
+#### 下载测速脚本
 
 ```
-wget "https://github.com/chiakge/Linux-NetSpeed/raw/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
+wget https://shiyu.pro/file/speedtest.py
 ```
 
+#### 把脚本移动进去bin文件夹方便以后直接执行
+
+```
+mv speedtest.py /bin/
+```
+
+#### 赋予执行权力
+
+```
+chmod +x /bin/speedtest.py
+```
+
+#### 然后直接输入命令开始测速
+
+```
+speedtest.py
+```
+
+### 更改配置文件
+
+```
+vi /etc/v2ray/config.json
+```
+
+#### 更改配置说明(UUD在线生成器 https://www.uuidgenerator.net/)
+#### 注意:V2Ray的json配置文件支持 //、/* */形式的注释，所以不需要删除注解也可以运行，当你的文本编辑器支持 json 的语法检查时可能会对注释报错，不用理会，V2Ray会正确的处理它
+```
+{
+  "inbounds": [{
+    "port": 1998,   //端口(port)
+    "protocol": "vmess",
+    "settings": {
+      "clients": [
+        {
+          "id": "24cc79bb-15f3-4ef7-a689-2334fb9a7888",   //UUID
+          "level": 1,
+          "alterId": 64
+        }
+      ]
+    }
+  }],
+//一下为ss配置
+  "inboundDetour": [
+    {
+      "protocol": "shadowsocks",
+      "port": 30001, // 监听 30001 端口
+      "settings": {
+        "method": "aes-256-cfb", 
+        "password": "v2ray",     // 密码，必须和客户端相同
+        "udp": true             // 是否开启 UDP 转发
+      }
+    }
+  ],
+//到此ss配置结束
+  "outbounds": [{
+    "protocol": "freedom",
+    "settings": {}
+  },{
+    "protocol": "blackhole",
+    "settings": {},
+    "tag": "blocked"
+  }],
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "ip": ["geoip:private"],
+        "outboundTag": "blocked"
+      }
+    ]
+  }
+}
+```
+
+### 相关命令
+
+#### 启动
+```
+systemctl start v2ray
+```
+#### 停止
+```
+systemctl stop v2ray
+```
+#### 重启
+```
+systemctl restart v2ray
+```
+#### 开机自启
+```
+systemctl enable v2ray
+```
+#### 查看运行状态
+```
+systemctl status v2ray
+```
+//如果显示为绿色文字的active(running)，则V2Ray的配置正确
 
 
-# 特别说明
+
+
+
+## 以下为SSR安装libsodium库
 
 ## 安装libsodium库解决libsodium not found问题
 ## 0.案例
