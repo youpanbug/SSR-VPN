@@ -1,5 +1,5 @@
 # V2ray搭建
-### 获取root权限
+### 1、获取 PWD=/home/用户名（当前用户主目录） 权限
 ```
 sudo su
 ```
@@ -21,7 +21,7 @@ bash <(curl -L -s https://install.direct/go.sh)
 systemctl start v2ray       //然后输入端口 ID测试是否能正常使用(端口（Port）、id（UUID）)
 ```
 
-# 手动安装TCP BBR（Bottleneck Bandwidth and Round-trip propagation time）是由Google设计，于2016年发布的拥塞算法。
+# 2、手动安装TCP BBR（Bottleneck Bandwidth and Round-trip propagation time）是由Google设计，于2016年发布的拥塞算法。
 ### 更新系统
 ```
 yum update -y
@@ -103,56 +103,14 @@ lsmod | grep bbr
 
 
 
-
-
-
-## 其它
-
-### CentOS7 如果不能使用可能是因为防火墙firewall问题
-```
-## 开放端口 比如你设置的SSR端口为2013
-firewall-cmd --zone=public --add-port=2013/tcp --permanent
-firewall-cmd --zone=public --add-port=2013/udp --permanent
-## 重新载入
-firewall-cmd --reload
-## 查看已开放端口
-firewall-cmd --zone=public --list-ports
-```
-
-### 测速
-
-#### 下载测速脚本
-
-```
-wget https://shiyu.pro/file/speedtest.py
-```
-
-#### 把脚本移动进去bin文件夹方便以后直接执行
-
-```
-mv speedtest.py /bin/
-```
-
-#### 赋予执行权力
-
-```
-chmod +x /bin/speedtest.py
-```
-
-#### 然后直接输入命令开始测速
-
-```
-speedtest.py
-```
-
-### 更改配置文件
+# 3、更改配置文件
 
 ```
 vi /etc/v2ray/config.json
 ```
 
-#### 更改配置说明(UUD在线生成器 https://www.uuidgenerator.net/)
-#### 注意:V2Ray的json配置文件支持 //、/* */形式的注释，所以不需要删除注解也可以运行，当你的文本编辑器支持 json 的语法检查时可能会对注释报错，不用理会，V2Ray会正确的处理它
+### 更改配置说明(UUD在线生成器 https://www.uuidgenerator.net/)
+### 注意:V2Ray的json配置文件支持 //、/* */形式的注释，所以不需要删除注解也可以运行，当你的文本编辑器支持 json 的语法检查时可能会对注释报错，不用理会，V2Ray会正确的处理它
 ```
 {
   "inbounds": [{
@@ -201,7 +159,28 @@ vi /etc/v2ray/config.json
 }
 ```
 
-### 相关命令
+# 3、更改服务器时间和时区
+
+### 获取 PWD=/root)权限
+```
+1.sudo -i
+```
+### 查看当前时区
+```
+2.date -R
+```
+### 修改本机时间
+```
+cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```
+### 修改本机时区
+```
+echo 'Asia/Shanghai' >/etc/timezone
+```
+
+
+
+### 4、相关命令
 
 #### 启动
 ```
@@ -229,7 +208,54 @@ systemctl status v2ray
 
 
 
-## 以下为SSR安装libsodium库
+
+
+## 5、其它
+
+### 5-1、CentOS7 如果不能使用可能是因为防火墙firewall问题
+```
+## 开放端口 比如你设置的SSR端口为2013
+firewall-cmd --zone=public --add-port=2013/tcp --permanent
+firewall-cmd --zone=public --add-port=2013/udp --permanent
+## 重新载入
+firewall-cmd --reload
+## 查看已开放端口
+firewall-cmd --zone=public --list-ports
+```
+
+### 5-2、测速
+
+#### 下载测速脚本
+
+```
+wget https://shiyu.pro/file/speedtest.py
+```
+
+#### 把脚本移动进去bin文件夹方便以后直接执行
+
+```
+mv speedtest.py /bin/
+```
+
+#### 赋予执行权力
+
+```
+chmod +x /bin/speedtest.py
+```
+
+#### 然后直接输入命令开始测速
+
+```
+speedtest.py
+```
+
+
+
+
+
+
+
+## 6、以下为SSR安装libsodium库
 
 ## 安装libsodium库解决libsodium not found问题
 ## 0.案例
@@ -243,7 +269,7 @@ systemctl status v2ray
 su root
 ```
 
-## 1. 安装依赖
+## 6-1. 安装依赖
 
 ### Debian 7/8、Ubuntu 14/15/16 及其衍生系列：
 
@@ -259,7 +285,7 @@ yum groupinstall "Development Tools" -y
 yum install wget -y
 ```
 
-## 2. 下载 libsodium 最新版本(推荐用1.0.10版本)
+## 6-2. 下载 libsodium 最新版本(推荐用1.0.10版本)
 
 ### 可以从libsodium 官网下，也可以从github 下载。选择速度最快的下载方式。
 
@@ -275,7 +301,7 @@ wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz
 wget https://github.com/jedisct1/libsodium/releases/download/1.0.10/libsodium-1.0.10.tar.gz
 ```
 
-## 3. 解压
+## 6-3. 解压
 
 #### <1>官网下载的：
 
@@ -289,7 +315,7 @@ tar xzvf LATEST.tar.gz
 tar xzvf libsodium-1.0.10.tar.gz
 ```
 
-## 4. 生成配置文件
+## 6-4. 生成配置文件
 
 ```
 cd libsodium*
@@ -299,13 +325,13 @@ cd libsodium*
 ./configure
 ```
 
-## 5. 编译并安装
+## 6-5. 编译并安装
 
 ```
 make -j8 && make install
 ```
 
-## 6. 添加运行库位置并加载运行库：
+## 6-6. 添加运行库位置并加载运行库：
 
 ```
 echo /usr/local/lib > /etc/ld.so.conf.d/usr_local_lib.conf
