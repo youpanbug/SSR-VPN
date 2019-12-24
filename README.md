@@ -1,7 +1,7 @@
 # V2ray搭建
-### 1、获取 PWD=/home/用户名（当前用户主目录） 权限
+### 1、获取权限
 ```
-sudo su
+sudo -i
 ```
 ### cenos更新指令
 
@@ -163,11 +163,11 @@ vi /etc/v2ray/config.json
 
 ### 获取 PWD=/root)权限
 ```
-1.sudo -i
+sudo -i
 ```
 ### 查看当前时区
 ```
-2.date -R
+date -R
 ```
 ### 修改本机时间
 ```
@@ -205,6 +205,23 @@ systemctl status v2ray
 //如果显示为绿色文字的active(running)，则V2Ray的配置正确
 
 
+
+
+
+# V2ray一键搭建脚本(由233大神提供)
+
+```
+bash <(curl -s -L https://git.io/v2ray.sh)
+```
+### 如果提示 curl: command not found ，那是因为你的 VPS 没装 Curl
+#### ubuntu/debian 系统安装 Curl 方法:
+```
+apt-get update -y && apt-get install curl -y
+```
+#### centos 系统安装 Curl 方法:
+```
+yum update -y && yum install curl -y
+```
 
 
 
