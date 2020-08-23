@@ -14,6 +14,11 @@ yum update -y
 ```
 bash <(curl -L -s https://install.direct/go.sh)
 ```
+### 以下来自233大神提供(一键安装脚本是第三方脚本，有可能会有一些安全风险)
+
+```
+bash <(curl -s -L https://git.io/v2ray.sh)
+```
 
 ### 启动V2ray
 
