@@ -14,11 +14,6 @@ yum update -y
 ```
 bash <(curl -L -s https://install.direct/go.sh)
 ```
-### 以下来自233大神提供(一键安装脚本是第三方脚本，有可能会有一些安全风险)
-
-```
-bash <(curl -s -L https://git.io/v2ray.sh)
-```
 
 ### 启动V2ray
 
@@ -235,6 +230,11 @@ yum update -y && yum install curl -y
 ## 5、其它
 
 ### 5-1、CentOS7 如果不能使用可能是因为防火墙firewall问题
+提示未安装firewalld输入以下命令
+```
+yum install firewalld 
+```
+
 ```
 ## 开放端口 比如你设置的SSR端口为2013
 firewall-cmd --zone=public --add-port=2013/tcp --permanent
