@@ -213,6 +213,10 @@ systemctl status v2ray
 ```
 bash <(curl -s -L https://git.io/v2ray.sh)
 ```
+### 2022.8.14更新
+```
+bash <(curl -sL https://raw.githubusercontent.com/hijkpw/scripts/master/goV2.sh)
+```
 ### 如果提示 curl: command not found ，那是因为你的 VPS 没装 Curl
 #### ubuntu/debian 系统安装 Curl 方法:
 ```
