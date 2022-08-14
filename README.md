@@ -213,7 +213,7 @@ systemctl status v2ray
 ```
 bash <(curl -s -L https://git.io/v2ray.sh)
 ```
-### 2022.8.14更新
+### 脚本 2022.8.14更新
 ```
 bash <(curl -sL https://raw.githubusercontent.com/hijkpw/scripts/master/goV2.sh)
 ```
